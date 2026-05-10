@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Apply to the StarStore Ambassador Program and earn commissions promoting Telegram Stars with dedicated support and rewards.">
+    <link rel="canonical" href="https://starstore.app/apply_ambassador">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="StarStore Ambassador Program - Join the Waitlist | StarStore">
+    <meta property="og:description" content="Apply to the StarStore Ambassador Program and earn commissions promoting Telegram Stars.">
+    <meta property="og:url" content="https://starstore.app/apply_ambassador">
     <title>StarStore Ambassador Program - Join the Waitlist</title>
     <link rel="icon" href="/favicon.png" type="image/png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
@@ -386,10 +392,12 @@
             border-radius: 6px;
         }
     </style>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"StarStore","url":"https://starstore.app","logo":"https://starstore.app/favicon.png","sameAs":["https://t.me/TgStarStore_bot"]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"StarStore","url":"https://starstore.app","potentialAction":{"@type":"SearchAction","target":"https://starstore.app/blog/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
 </head>
 <body>
     <div class="topbar">
-        <button id="exitButton" class="topbar-exit-btn" aria-label="Back">
+        <button id="exitButton" class="topbar-exit-btn" aria-label="Back" type="button" onclick="handleApplyExit(event)">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
                 <path d="M14 5L8 11L14 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -920,15 +928,45 @@
             form.addEventListener('submit', submitForm);
         })();
 
-        // Exit button functionality - wrapped in DOMContentLoaded to ensure DOM is ready
+        function handleApplyExit(e) {
+            if (e) e.preventDefault();
+            const tg = window.Telegram?.WebApp;
+            try {
+                if (tg?.BackButton && tg.BackButton.isVisible) {
+                    tg.BackButton.hide();
+                }
+                if (typeof tg?.close === 'function') {
+                    tg.close();
+                    return;
+                }
+            } catch (_) {}
+
+            if (window.history.length > 1) {
+                window.history.back();
+                return;
+            }
+            window.location.href = '/about.html';
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const exitBtn = document.getElementById('exitButton');
             if (exitBtn) {
-                exitBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.location.href = '/about.html';
-                });
+                exitBtn.addEventListener('click', handleApplyExit, { passive: false });
+                exitBtn.addEventListener('touchend', handleApplyExit, { passive: false });
             }
+
+            // UTM helper for outbound campaign links on this page
+            document.querySelectorAll('a[href^="http"]').forEach((a) => {
+                try {
+                    const u = new URL(a.href);
+                    if (!u.searchParams.has('utm_source')) {
+                        u.searchParams.set('utm_source', 'starstore');
+                        u.searchParams.set('utm_medium', 'ambassador_page');
+                        u.searchParams.set('utm_campaign', 'apply');
+                        a.href = u.toString();
+                    }
+                } catch (_) {}
+            });
             
             // Initialize translations
             if (window.TranslationUtils && window.TranslationUtils.applyTranslations) {
